@@ -15,7 +15,7 @@ export const PetContext = createContext<TPetContext | null>(null);
 
 type PetContextProps = {
   data: Pet[];
-  children: React.ReactNode[];
+  children: React.ReactNode;
 };
 
 export default function PetContextProvider({
