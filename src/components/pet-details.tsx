@@ -4,6 +4,7 @@ import usePetContext from "@/hooks/use-context";
 import { Pet } from "@/lib/type";
 import Image from "next/image";
 import React from "react";
+import PetButton from "./pet-button";
 
 type PetDetailsProps = {
   pet: Pet | undefined;
@@ -28,6 +29,8 @@ export default function PetDetails() {
 }
 
 function TobBar({ pet }: PetDetailsProps) {
+  const { handleCheckOutPet } = usePetContext();
+
   return (
     <div className="flex items-center bg-white px-8 py-5 border-b border-light">
       <Image
@@ -38,6 +41,15 @@ function TobBar({ pet }: PetDetailsProps) {
         className="h-[75px] w-[75px] rounded-full object-cover"
       />
       <h2 className="text-3xl font-semibold leading-7 ml-5">{pet?.name}</h2>
+      <div className="ml-auto space-x-3">
+        <PetButton actionType="edit">Edit</PetButton>
+        <PetButton
+          actionType="checkouts" 
+          onClick={() => handleCheckOutPet(pet?.id)}
+        >
+          Checkout
+        </PetButton>
+      </div>
     </div>
   );
 }

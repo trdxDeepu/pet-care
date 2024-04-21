@@ -8,7 +8,8 @@ type TPetContext = {
   selectedPetID: string | null;
   handleSelectedPetID: (id: string) => void;
   selectedPet: Pet | undefined;
-  totalPets: number;  
+  totalPets: number;
+  handleCheckOutPet: (id: string) => void;
 };
 
 export const PetContext = createContext<TPetContext | null>(null);
@@ -27,10 +28,16 @@ export default function PetContextProvider({
 
   const selectedPet = pets.find((pet) => pet.id === selectedPetID);
 
-  const totalPets = pets.length;  
+  const totalPets = pets.length;
 
   const handleSelectedPetID = (id: string) => {
     setSelectedPetID(id);
+  };
+
+  // checkout
+
+  const handleCheckOutPet = (id: string) => {
+    setPets((prev) => prev.filter((pet) => pet.id !== id));
   };
 
   return (
@@ -40,7 +47,9 @@ export default function PetContextProvider({
         selectedPetID,
         handleSelectedPetID,
         selectedPet,
-        totalPets
+        totalPets,
+
+        handleCheckOutPet,
       }}
     >
       {children}
