@@ -6,10 +6,11 @@ import { useState, createContext } from "react";
 type TPetContext = {
   pets: Pet[];
   selectedPetID: string | null;
-  handleSelectedPetID: (id: string) => void;
   selectedPet: Pet | undefined;
   totalPets: number;
+  handleSelectedPetID: (id: string) => void;
   handleCheckOutPet: (id: string) => void;
+  handleAddPet: (newPet: Omit<Pet, "id">) => void;
 };
 
 export const PetContext = createContext<TPetContext | null>(null);
@@ -34,6 +35,10 @@ export default function PetContextProvider({
     setSelectedPetID(id);
   };
 
+  const handleAddPet = (newPet: Omit<Pet, "id">) => {
+    setPets((prev) => [...prev, { ...newPet, id: Date.now().toString() }]);
+  };
+
   // checkout
 
   const handleCheckOutPet = (id: string) => {
@@ -48,7 +53,7 @@ export default function PetContextProvider({
         handleSelectedPetID,
         selectedPet,
         totalPets,
-
+        handleAddPet,
         handleCheckOutPet,
       }}
     >
