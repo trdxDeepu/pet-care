@@ -1,6 +1,14 @@
 import React from "react";
 import { Button } from "./ui/button";
 import { PlusIcon } from "@radix-ui/react-icons";
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "./ui/dialog";
 
 type PetButtonProps = {
   actionType: "add" | "edit" | "checkouts";
@@ -14,20 +22,34 @@ export default function PetButton({
   children,
   onClick,
 }: PetButtonProps) {
-  if (actionType === "add") {
+  if (actionType === "checkouts") {
     return (
-      <Button size={"icon"}>
-        <PlusIcon />
+      <Button variant={"secondary"} onClick={onClick}>
+        {children}
       </Button>
     );
   }
-  if (actionType === "edit") {
-    return <Button variant={"secondary"}>{children}</Button>;
-  }
 
-  return (
-    <Button variant={"secondary"} onClick={onClick}>
-      {children}
-    </Button>
-  );
+  if (actionType === "add" || "edit") {
+    return (
+      <Dialog>
+        <DialogTrigger>
+          {actionType === "add" ? (
+            <Button size={"icon"}>
+              <PlusIcon />
+            </Button>
+          ) : (
+            <Button variant={"secondary"}>{children}</Button>
+          )}
+        </DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              {actionType === "add" ? "Add Pet" : "Edit Pet"}
+            </DialogTitle>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
+    );
+  }
 }
