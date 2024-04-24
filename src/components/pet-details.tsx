@@ -3,8 +3,10 @@
 import usePetContext from "@/hooks/use-context";
 import { Pet } from "@/lib/type";
 import Image from "next/image";
-import React from "react";
+import React, { useTransition } from "react";
 import PetButton from "./pet-button";
+import { deletePet } from "@/actions/action";
+import { toast } from "sonner";
 
 type PetDetailsProps = {
   pet: Pet | undefined;
@@ -29,7 +31,7 @@ export default function PetDetails() {
 }
 
 function TobBar({ pet }: PetDetailsProps) {
-  const { handleCheckOutPet } = usePetContext();
+  const [isPending, startTransition] = useTransition();
 
   return (
     <div className="flex items-center bg-white px-8 py-5 border-b border-light">
@@ -44,8 +46,14 @@ function TobBar({ pet }: PetDetailsProps) {
       <div className="ml-auto space-x-3">
         <PetButton actionType="edit">Edit</PetButton>
         <PetButton
-          actionType="checkouts" 
-          onClick={() => handleCheckOutPet(pet?.id)}
+          actionType="checkouts"
+          disabled={isPending}  
+          onClick={async () => {
+            startTransition(async () => {
+              await deletePet(pet?.id);
+              toast.success("Pet deleted successfully");
+            });
+          }}
         >
           Checkout
         </PetButton>

@@ -1,5 +1,6 @@
 "use client";
 
+import { addPet } from "@/actions/action";
 import { Pet } from "@/lib/type";
 import { useState, createContext } from "react";
 
@@ -22,10 +23,13 @@ type PetContextProps = {
 };
 
 export default function PetContextProvider({
-  data,
+  data:pets,
   children,
 }: PetContextProps) {
-  const [pets, setPets] = useState(data);
+  // const [pets, setPets] = useState(data);
+
+
+
   const [selectedPetID, setSelectedPetID] = useState<string | null>(null);
 
   const selectedPet = pets.find((pet) => pet.id === selectedPetID);
@@ -35,27 +39,29 @@ export default function PetContextProvider({
   const handleSelectedPetID = (id: string) => {
     setSelectedPetID(id);
   };
-
-  const handleEditPet = (petId: string, updateNewPet: Omit<Pet, "id">) => {
-    setPets((prev) =>
-      prev.map((pet) => {
-        if (pet.id === petId) {
-          return { id: petId, ...updateNewPet };
-        }
-        return pet;
-      })
-    );
+  
+  const handleAddPet = async (newPet: Omit<Pet, "id">) => {
+    // setPets((prev) => [...prev, { ...newPet, id: Date.now().toString() }]);
+    await addPet(newPet);
   };
 
-  const handleAddPet = (newPet: Omit<Pet, "id">) => {
-    setPets((prev) => [...prev, { ...newPet, id: Date.now().toString() }]);
-  };
+  // const handleEditPet = (petId: string, updateNewPet: Omit<Pet, "id">) => {
+  //   setPets((prev) =>
+  //     prev.map((pet) => {
+  //       if (pet.id === petId) {
+  //         return { id: petId, ...updateNewPet };
+  //       }
+  //       return pet;
+  //     })
+  //   );
+  // };
+
 
   // checkout
 
-  const handleCheckOutPet = (id: string) => {
-    setPets((prev) => prev.filter((pet) => pet.id !== id));
-  };
+  // const handleCheckOutPet = (id: string) => {
+  //   setPets((prev) => prev.filter((pet) => pet.id !== id));
+  // };
 
   return (
     <PetContext.Provider
@@ -66,8 +72,8 @@ export default function PetContextProvider({
         selectedPet,
         totalPets,
         handleAddPet,
-        handleCheckOutPet,
-        handleEditPet,
+        // handleCheckOutPet,
+        // handleEditPet,
       }}
     >
       {children}

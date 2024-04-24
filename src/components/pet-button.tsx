@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import React, { useState } from "react";
 import { Button } from "./ui/button";
@@ -17,23 +17,25 @@ type PetButtonProps = {
   actionType: "add" | "edit" | "checkouts";
   children?: React.ReactNode;
   className?: string;
+  disabled?: boolean;
   onClick?: () => void;
 };
 
 export default function PetButton({
   actionType,
   children,
+  disabled,
   onClick,
 }: PetButtonProps) {
   const [isFormOpen, setIsFormOpen] = useState(false);
 
   if (actionType === "checkouts") {
     return (
-      <Button variant={"secondary"} onClick={onClick}>
+      <Button variant={"secondary"} onClick={onClick} disabled={disabled}>
         {children}
       </Button>
     );
-  }
+  } 
 
   if (actionType === "add" || "edit") {
     return (
