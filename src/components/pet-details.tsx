@@ -1,15 +1,14 @@
 "use client";
 
 import usePetContext from "@/hooks/use-context";
-import { Pet } from "@/lib/type";
+
 import Image from "next/image";
-import React, { useTransition } from "react";
+import React from "react";
 import PetButton from "./pet-button";
-import { deletePet } from "@/actions/action";
-import { toast } from "sonner";
+import { Pet } from "@prisma/client";
 
 type PetDetailsProps = {
-  pet: Pet | undefined;
+  pet: Pet;
 };
 
 export default function PetDetails() {
@@ -31,8 +30,7 @@ export default function PetDetails() {
 }
 
 function TobBar({ pet }: PetDetailsProps) {
-
-  const {handleCheckOutPet} = usePetContext()
+  const { handleCheckOutPet } = usePetContext();
 
   return (
     <div className="flex items-center bg-white px-8 py-5 border-b border-light">
@@ -48,8 +46,7 @@ function TobBar({ pet }: PetDetailsProps) {
         <PetButton actionType="edit">Edit</PetButton>
         <PetButton
           actionType="checkouts"
-          // disabled={isPending}  
-          onClick={ async() => await handleCheckOutPet(pet?.id)}
+          onClick={async () => await handleCheckOutPet(pet.id)}
         >
           Checkout
         </PetButton>
