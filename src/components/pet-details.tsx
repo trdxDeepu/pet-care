@@ -31,7 +31,8 @@ export default function PetDetails() {
 }
 
 function TobBar({ pet }: PetDetailsProps) {
-  const [isPending, startTransition] = useTransition();
+
+  const {handleCheckOutPet} = usePetContext()
 
   return (
     <div className="flex items-center bg-white px-8 py-5 border-b border-light">
@@ -47,13 +48,8 @@ function TobBar({ pet }: PetDetailsProps) {
         <PetButton actionType="edit">Edit</PetButton>
         <PetButton
           actionType="checkouts"
-          disabled={isPending}  
-          onClick={async () => {
-            startTransition(async () => {
-              await deletePet(pet?.id);
-              toast.success("Pet deleted successfully");
-            });
-          }}
+          // disabled={isPending}  
+          onClick={ async() => await handleCheckOutPet(pet?.id)}
         >
           Checkout
         </PetButton>
