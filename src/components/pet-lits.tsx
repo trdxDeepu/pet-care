@@ -4,7 +4,7 @@ import usePetContext from "@/hooks/use-context";
 import { useSearchQuery } from "@/hooks/use-search-context";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
-import React, { use } from "react";
+import React from "react";
 
 export default function PetList() {
   const { pets, handleSelectedPetID, selectedPetID } = usePetContext();
