@@ -11,11 +11,15 @@ export const metadata: Metadata = {
     "PetCare is a pet daycare software that helps you manage your pet daycare business.",
 };
 
-export default function RootLayout({
+export default  function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
+  
+ 
+
   return (
     <html lang="en">
       <body
