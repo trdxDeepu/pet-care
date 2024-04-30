@@ -5,15 +5,18 @@ import { Input } from "./ui/input";
 import InputPassword from "./ui/input-password";
 import { Button } from "./ui/button";
 import Image from "next/image";
-import { login } from "@/actions/action";
+import { login, signUp } from "@/actions/action";
 
 type AuthFormProps = {
   type: string;
 };
 
 export default function AuthForm({ type }: AuthFormProps) {
+
+ 
+  
   return (
-    <form action={login}>
+    <form action={type === "LogIn" ? login : signUp}>
       <div className="space-y-1">
         <Label htmlFor="email">Email</Label>
         <Input type="email" id="email" name="email" />

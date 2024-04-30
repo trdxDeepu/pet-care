@@ -44,6 +44,7 @@ const config = {
   ],
   callbacks: {
     authorized: ({ auth, request }) => {
+
       const isLoggedIn = Boolean(auth?.user);
 
       const isTryingToAccessApp = request.nextUrl.pathname.includes("/app");
@@ -51,14 +52,36 @@ const config = {
       if (!isLoggedIn && isTryingToAccessApp) {
         return false;
       }
+
+      if (isLoggedIn && isTryingToAccessApp) {
+        return true;
+      }
+
       if (isLoggedIn && !isTryingToAccessApp) {
+        return Response.redirect(new URL("/app/dashboard", request.nextUrl));
+      }
+
+      if (!isLoggedIn && !isTryingToAccessApp) {
         return true;
       }
-      if(isTryingToAccessApp){
-        return true;
+
+      return true;
+    },
+    jwt: ({ token, user }) => {
+      if (user) {
+        //  on Sign in
+        token.userId= user.id;
       }
+      return token;
+    },
+    session: ({ session, token }) => {
+      if (session.user) {
+        session.user.id = token.userId;
+      }
+
+      return session;
     },
   },
 } satisfies NextAuthConfig;
 
-export const { auth, signIn } = NextAuth(config);
+export const { auth, signIn, signOut } = NextAuth(config);
