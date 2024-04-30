@@ -7,7 +7,7 @@ import { revalidatePath } from "next/cache";
 
 import { Pet } from "@prisma/client";
 import { petFormSchema, petIdSchema } from "@/lib/validation";
-import {  signIn, signOut } from "@/lib/auth";
+import {  auth, signIn, signOut } from "@/lib/auth";
 import bcrypt from "bcrypt";
 import { redirect } from 'next/navigation'
 
@@ -17,7 +17,7 @@ export async function login(formData: FormData) {
   const authData = Object.fromEntries(formData.entries());
   await signIn("credentials", authData);
   redirect('/app/dashboard')
-  console.log("Logged in");
+  ;
    
 }
 
@@ -48,6 +48,13 @@ export async function logout() {
 /* Server actions for pets  */
 
 export async function addPet(petData: unknown) {
+
+  const session = await auth();
+
+  if (!session?.user) {
+    redirect("/login");
+  }
+
   await sleep(1000);
 
   const validatedPet = petFormSchema.safeParse(petData);
@@ -59,7 +66,14 @@ export async function addPet(petData: unknown) {
 
   try {
     await prisma.pet.create({
-      data: validatedPet.data,
+      data: {
+        ...validatedPet.data,
+        user:{
+          connect:{
+            id:session.user.id
+          }
+        }
+      },
     });
   } catch (error) {
     return {
