@@ -5,10 +5,15 @@ import { Button } from "./button";
 import { logout } from "@/actions/action";
 
 export default function SignOutBtn() {
+  const [isPending, startTransition] = React.useTransition();
+
   return (
     <Button
+    disabled={isPending}
       onClick={async () => {
-        await logout();
+        startTransition(async () => {
+          await logout();
+        });
       }}
     >
       Sign out

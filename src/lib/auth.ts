@@ -1,10 +1,10 @@
 import NextAuth, { NextAuthConfig } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 
-import prisma from "./db";
 import bcrypt from "bcryptjs";
 
-import Google from "next-auth/providers/google";
+import { getPetUserByEmail } from "./server-utils";
+import { authFormSchema } from "./validation";
 
 const config = {
   pages: {
@@ -15,25 +15,25 @@ const config = {
     Credentials({
       async authorize(credentials) {
         //  ruun on login
-        const { email, password } = credentials;
 
-        const user = await prisma.user.findUnique({
-          where: {
-            email: email as string,
-          },
-        });
+        const validatedFormData = authFormSchema.safeParse(credentials);
+        if (!validatedFormData.success) {
+          return null;
+        }
 
+        const { email, password } = validatedFormData.data;
+
+        const user = await getPetUserByEmail(email);
         if (!user) {
           console.log("No user found");
           return null;
         }
 
-        const passwordMatched = await bcrypt.compare(
+        const passwordsMatch = await bcrypt.compare(
           password,
           user.hashedPassword
         );
-
-        if (!passwordMatched) {
+        if (!passwordsMatch) {
           console.log("Invalid credentials");
           return null;
         }
@@ -44,10 +44,11 @@ const config = {
   ],
   callbacks: {
     authorized: ({ auth, request }) => {
-
       const isLoggedIn = Boolean(auth?.user);
 
-      const isTryingToAccessApp = request.nextUrl.pathname.includes("/app");
+      const isTryingToAccessApp = request.nextUrl.pathname
+        ? request.nextUrl.pathname.includes("/app")
+        : false;
 
       if (!isLoggedIn && isTryingToAccessApp) {
         return false;
@@ -58,7 +59,14 @@ const config = {
       }
 
       if (isLoggedIn && !isTryingToAccessApp) {
-        return Response.redirect(new URL("/app/dashboard", request.nextUrl));
+        if (
+          request.nextUrl.pathname.includes("/login") ||
+          request.nextUrl.pathname.includes("/signup")
+        ) {
+          return Response.redirect(new URL("/payment", request.nextUrl));
+        } else {
+          return true;
+        }
       }
 
       if (!isLoggedIn && !isTryingToAccessApp) {
@@ -70,7 +78,7 @@ const config = {
     jwt: ({ token, user }) => {
       if (user) {
         //  on Sign in
-        token.userId= user.id;
+        token.userId = user.id;
       }
       return token;
     },
@@ -84,4 +92,9 @@ const config = {
   },
 } satisfies NextAuthConfig;
 
-export const { auth, signIn, signOut } = NextAuth(config);
+export const {
+  auth,
+  signIn,
+  signOut,
+  handlers: { GET, POST },
+} = NextAuth(config);

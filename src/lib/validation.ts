@@ -1,11 +1,11 @@
- // making schema using zod for server side validation
+// making schema using zod for server side validation
 
 import { z } from "zod";
 import { DEFAULT_PET_IMAGE } from "./constant";
 
 export const petIdSchema = z.string().cuid();
 
- export const petFormSchema = z
+export const petFormSchema = z
   .object({
     name: z.string().trim().min(1, { message: "Name is required" }).max(100),
     ownerName: z
@@ -24,3 +24,12 @@ export const petIdSchema = z.string().cuid();
     ...data,
     imageUrl: data.imageUrl || DEFAULT_PET_IMAGE,
   }));
+
+export type TPetForm = z.infer<typeof petFormSchema>;
+
+export const authFormSchema = z.object({
+  email: z.string().email().max(100),
+  password: z.string().max(100),
+});
+
+export type TAuth = z.infer<typeof authFormSchema>;

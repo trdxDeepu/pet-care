@@ -65,7 +65,7 @@ export default function PetForm({
         } else if (actionType === "edit") {
           await handleEditPet(selectedPet!.id, petData);
         }
-      }}
+      }} 
       className="flex flex-col"
     >
       <div className="space-y-3">

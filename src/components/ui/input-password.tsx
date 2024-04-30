@@ -12,7 +12,13 @@ export default function InputPassword() {
 
   return (
     <div className="relative">
-      <Input type={showPassword ? "text" : "password"} id="password" name="password"/>
+      <Input
+        type={showPassword ? "text" : "password"}
+        id="password"
+        name="password"
+        required
+        maxLength={100}
+      />
       <div
         className="absolute inset-y-0 right-0 pr-3 flex items-center"
         onClick={handleTogglePassword}
